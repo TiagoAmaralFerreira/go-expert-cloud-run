@@ -1,10 +1,21 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/TiagoAmaralFerreira/go-expert-cloud-run/handlers"
+)
 
 func main() {
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("Hello, World!"))
-    })
-    http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/weather/", handlers.WeatherHandler)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Server starting on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
