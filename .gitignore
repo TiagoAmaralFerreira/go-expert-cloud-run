@@ -29,9 +29,6 @@ cloudrun
 .DS_Store
 Thumbs.db
 
-# Go
-go.sum
-
 # Docker
 .dockerignore
 
