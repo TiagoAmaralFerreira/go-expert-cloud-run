@@ -15,6 +15,10 @@ API para consultar temperatura baseada em CEP brasileiro.
 - Go 1.22+
 - Conta na [WeatherAPI](https://www.weatherapi.com/) (gratuita)
 
+## 🚀 Link Teste
+
+[https://cloud-run-661862502309.us-central1.run.app](https://cloud-run-661862502309.us-central1.run.app/weather/01001000)
+
 ## ⚙️ Configuração
 
 1. **Clone o repositório:**
