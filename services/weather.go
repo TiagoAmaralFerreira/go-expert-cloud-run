@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 )
 
 type WeatherAPIResponse struct {
@@ -14,14 +16,42 @@ type WeatherAPIResponse struct {
 	} `json:"current"`
 }
 
+func normalizeCityName(city string) string {
+	replacements := map[string]string{
+		"ã": "a", "á": "a", "â": "a", "à": "a",
+		"é": "e", "ê": "e", "è": "e",
+		"í": "i", "î": "i", "ì": "i",
+		"ó": "o", "ô": "o", "ò": "o",
+		"ú": "u", "û": "u", "ù": "u",
+		"ç": "c",
+		"ñ": "n",
+	}
+
+	normalized := city
+	for accented, plain := range replacements {
+		normalized = strings.ReplaceAll(normalized, accented, plain)
+		normalized = strings.ReplaceAll(normalized, strings.ToUpper(accented), strings.ToUpper(plain))
+	}
+
+	return normalized
+}
+
 func GetTemperature(city string) (float64, error) {
 	apiKey := os.Getenv("WEATHER_API_KEY")
 	if apiKey == "" {
 		return 0, errors.New("weather API key not configured")
 	}
 
-	url := fmt.Sprintf("http://api.weatherapi.com/v1/current.json?key=%s&q=%s&aqi=no", apiKey, city)
-	resp, err := http.Get(url)
+	normalizedCity := normalizeCityName(city)
+	baseURL := "http://api.weatherapi.com/v1/current.json"
+	params := url.Values{}
+	params.Add("key", apiKey)
+	params.Add("q", normalizedCity)
+	params.Add("aqi", "no")
+
+	fullURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
+
+	resp, err := http.Get(fullURL)
 	if err != nil {
 		return 0, err
 	}

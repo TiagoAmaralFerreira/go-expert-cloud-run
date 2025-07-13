@@ -35,12 +35,14 @@ func WeatherHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "error getting city information"})
 		return
 	}
 
 	tempC, err := services.GetTemperature(city)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "error getting weather information"})
 		return
 	}
 
